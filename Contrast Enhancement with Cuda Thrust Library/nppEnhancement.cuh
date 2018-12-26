@@ -59,6 +59,10 @@ int nppEnhancement()
 	// Copy the image from the host to GPU
 	oROI.width = nWidth;
 	oROI.height = nHeight;
+
+	// Performance clock start (just before using GPU)
+	auto start = std::chrono::steady_clock::now();
+
 	pSrc_Dev = nppiMalloc_8u_C1(nWidth, nHeight, &nSrcStep_Dev);
 	pDst_Dev = nppiMalloc_8u_C1(nWidth, nHeight, &nDstStep_Dev);
 	std::cout << "Copy image from host to device." << std::endl;
@@ -99,9 +103,15 @@ int nppEnhancement()
 	std::cout << "Work done! Copy the result back to host." << std::endl;
 	cudaMemcpy2D(pDst_Host, nWidth * sizeof(Npp8u), pDst_Dev, nDstStep_Dev, nWidth * sizeof(Npp8u), nHeight, cudaMemcpyDeviceToHost);
 
+	// Performance clock stop (just after getting data from GPU)
+	auto end = std::chrono::steady_clock::now();
+	auto diff = end - start;
+	auto diff_sec = std::chrono::duration_cast<std::chrono::milliseconds>(diff);
+	std::cout << "Computation time(ms): " << diff_sec.count() << std::endl;
+
 	// Output the result image.
 	std::cout << "Output the PGM file." << std::endl;
-	WritePGM("lena_after.pgm", pDst_Host, nWidth, nHeight, nMaxGray);
+	WritePGM("lena_after_npp.pgm", pDst_Host, nWidth, nHeight, nMaxGray);
 
 	// Clean up.
 	std::cout << "Clean up." << std::endl;
