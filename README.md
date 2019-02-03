@@ -1,2 +1,2 @@
-# Contrast-Enhancement-with-Cuda-Trust
-Image Contrast Enhancement with Cuda Trust Library
+# Contrast-Enhancement-with-Cuda-Thrust
+Image Contrast Enhancement with Cuda Thrust Library
